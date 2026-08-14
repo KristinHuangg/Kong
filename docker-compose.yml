@@ -1,0 +1,33 @@
+# Postgres 15 for local development and tests.
+#
+# Only the database is containerized. The API runs directly on your host via
+# `npm run start:dev` so hot-reload and debugger breakpoints behave normally.
+#
+#   docker compose up -d       start Postgres
+#   docker compose ps          check health
+#   docker compose down -v     stop and wipe all data
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: service-catalog-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: service_catalog
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # Prevents the API and migrations from connecting before Postgres is
+      # genuinely accepting connections. A running container is not the same
+      # thing as a ready database.
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d service_catalog']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

@@ -1,0 +1,10 @@
+# Normalise line endings to LF in the working tree on every platform.
+#
+# Git for Windows defaults to core.autocrlf=true, which checks files out with
+# CRLF. That conflicts with "endOfLine": "lf" in .prettierrc and would make
+# `npm run lint` fail on a fresh clone. Pinning eol=lf here keeps the working
+# tree consistent regardless of each contributor's local Git settings.
+* text=auto eol=lf
+
+# Keep the lockfile diffable but out of the way in reviews.
+package-lock.json -diff
